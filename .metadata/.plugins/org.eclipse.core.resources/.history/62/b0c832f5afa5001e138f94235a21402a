@@ -1,0 +1,72 @@
+package com.lcwd.user.config;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.web.client.RestTemplate;
+
+import com.lcwd.user.config.interceptor.RestTemplateInterceptor;
+
+@Configuration
+public class ApplicationConfig {
+	
+	@Autowired
+	private ClientRegistrationRepository clientRegistrationRepository;
+	
+	@Autowired
+	private OAuth2AuthorizedClientRepository auth2AuthorizedClientRepository;
+
+	/**
+	 * @LoadBalanced: For enabling 1. 'multiple instance to balance the load' and 2. for enabling Requesting API
+	 * by "SERVICE-NAME" (important). After it we can call an API by using their name like this:
+	 * "http://RATING-SERVICE/ratings/getRatingsByUserId" without using their dynamic IP-address, which can 
+	 * become headache as it changed every time.
+	 * @return
+	 */
+    @Bean
+    @LoadBalanced
+    RestTemplate getREstTemplate() {
+		return new RestTemplate();	//Before configuration when we do not need 'RestTemplate intercepter'.
+    	
+    	//After configuration when we need 'RestTemplate intercepter'.
+//    	RestTemplate restTemplate = new RestTemplate();
+//    	
+//    	List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+//    	interceptors.add(new RestTemplateInterceptor(manager()));
+//    	
+//    	restTemplate.setInterceptors(interceptors);
+//    	
+//    	return restTemplate;
+	}
+    
+    /**
+     * @implNote creating a bean of DefaultOAuth2AuthorizedClientManager which will be used in FeignClientInterceptor
+     * class for getting token. 
+     * @return OAuth2AuthorizedClientManager
+     */
+    @Bean
+    OAuth2AuthorizedClientManager manager(ClientRegistrationRepository clientRegistrationRepository,
+    		OAuth2AuthorizedClientRepository auth2AuthorizedClientRepository) 
+    {    	
+    	OAuth2AuthorizedClientProvider provider = OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build();
+    	
+    	DefaultOAuth2AuthorizedClientManager defaultOAuth2AuthorizedClientManager 
+    		= new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, auth2AuthorizedClientRepository);
+    	
+    	defaultOAuth2AuthorizedClientManager.setAuthorizedClientProvider(provider);
+    	
+    	return defaultOAuth2AuthorizedClientManager;	
+    }
+
+}

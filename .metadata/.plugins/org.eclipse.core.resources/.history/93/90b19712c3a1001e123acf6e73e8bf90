@@ -1,0 +1,18 @@
+package com.lcwd.user.dto;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.lcwd.user.entities.Rating;
+import com.lcwd.user.entities.User;
+
+import lombok.Data;
+
+@Data
+public class UserResponceDto {
+	
+	private User user;
+
+	private List<Rating> ratings = new ArrayList<>();
+
+}

@@ -1,0 +1,5 @@
+package com.lcwd.user.config;
+
+public class WebSecirityConfig {
+
+}

@@ -1,0 +1,27 @@
+server:
+  port: 9085
+  
+spring:
+  application:
+    name: CONFIG-SERVER
+
+#Here it is registering the configuration from given config file on github. 
+#It searches for the file and get all configuration from the given URI below.
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/SurajGaur97/micro-services-config
+          clone-on-start: true
+
+#This configuration is for registering this application(service) on Eureka server. By this we can monitor our 
+#application states through it.
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:9080/eureka
+      

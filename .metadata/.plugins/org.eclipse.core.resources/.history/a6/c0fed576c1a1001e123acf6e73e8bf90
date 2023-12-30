@@ -1,0 +1,54 @@
+server:
+  port: 9081
+  
+spring:
+  datasource:
+#   driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/microservices
+    username: root
+    password: root
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    
+  application:
+    name: USER-SERVICE
+#   properties:
+#     hibernate:
+#       dialect: org.hibernate.dialect.MySQLDialect
+
+#This will take the configuration from CONFIG-SERVER which is further configured to take configuration details 
+#form GitHub repository.
+  config:
+    import: optional:configserver:http://localhost:9085
+    
+#For changing profile from GitHub repository's files accordingly like: prod, dev, default.
+#  profiles:
+#    active: prod
+#OR
+#  profiles:
+#    active: dev
+
+
+#This configuration will now come from GitHub config file. Repo name: micro-services-config. And configured here 
+#as just above lines, starts from 'config:'.
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:9080/eureka
+      
+#Resilience4j configuration
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+    endpoints:
+      web:
+        exposure:
+          include: health

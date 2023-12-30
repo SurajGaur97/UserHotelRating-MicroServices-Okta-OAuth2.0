@@ -1,0 +1,19 @@
+#The default port is 8761 here we are overriding the port no with 9080
+server:
+  port: 9080
+
+eureka:
+#Other services should have different instance like: 'prefer-ip-address: true' but for itself it 
+#should be: 'hostname: localhost'
+
+  instance:
+    hostname: localhost
+    
+    
+#Making the discovery service disabled for itself. So that it will not create conflict by searching itself. This 
+#should be enabled in all other service so that this Eureka-Service can search for those services and can keep their 
+#status and discovery.
+
+  client:
+    register-with-eureka: false
+    fetch-registry: false

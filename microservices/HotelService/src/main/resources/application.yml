@@ -1,0 +1,37 @@
+server:
+  port: 9082
+  
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/microservices
+    username: root
+    password: root
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    
+  application:
+    name: HOTEL-SERVICE
+    
+  config:
+    import: optional:configserver:http://localhost:9085
+    
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:9080/eureka
+
+#Configuring 3rd party OKTA Oauth-2.0 configuration for securing gateway application. The below configuration is 
+#taken from application created on okta developer website.
+okta:
+  oauth2:
+    issuer: https://dev-72853696.okta.com/oauth2/default
+    audience: api://default
+    
+    

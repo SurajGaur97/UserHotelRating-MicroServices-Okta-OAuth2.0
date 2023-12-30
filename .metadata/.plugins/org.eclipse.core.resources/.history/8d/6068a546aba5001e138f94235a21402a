@@ -1,0 +1,38 @@
+package com.lcwd.user.config.interceptor;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.stereotype.Component;
+
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+
+/**
+ * @implNote this class has been created as intercepter for FiegnLCient so that FiegnCLient can set the token 
+ * to the requesting API's headers for making sure that the request sending to Rating or Hotel Services as a 
+ * reliable/authorized/secure requests source like User-Service. Mean request is coming from a safe source and 
+ * can be believe on it by Rating and Hotel Service.
+ */
+@Configuration
+@Component
+public class FeignClientInterceptor implements RequestInterceptor{
+
+	//Manager for getting token information.
+	private OAuth2AuthorizedClientManager clientManager; 
+	
+	@Override
+	public void apply(RequestTemplate template) {
+		
+		//the 'my-internal-client' came from application.yml file where we have registering a client configuration
+		String tokenValue = clientManager.authorize(
+				OAuth2AuthorizeRequest.withClientRegistrationId("my-internal-client")
+				.principal("internal")
+				.build())
+				.getAccessToken()
+				.getTokenValue();
+		
+		template.header("Authorization", "Bearer " + tokenValue);
+		
+	}
+}

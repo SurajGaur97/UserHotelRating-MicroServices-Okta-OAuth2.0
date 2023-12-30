@@ -1,0 +1,18 @@
+package com.lcwd.gateway;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * @apiNote This application is an API Gatway server which route all the request through itself and reach to all 
+ * services through it. 
+ */
+@SpringBootApplication
+public class ApiGatewayApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ApiGatewayApplication.class, args);
+		System.out.println("API-GATEWAY Started !!");
+	}
+
+}

@@ -1,0 +1,7 @@
+For starting application follow the below steps:
+1. ServiceRegistry
+2. ConfigServer
+3. ApiGateway
+4. UserService
+5. RatingService
+6. HotelService

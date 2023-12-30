@@ -1,0 +1,17 @@
+package com.lcwd.user.config;
+
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+
+@Configuration
+public class ApplicationConfig {
+
+    @Bean
+    @LoadBalanced	//@LoadBalanced: For enabling the 'multiple instance to balance load' and for enabling Requesting API by "SERVICE-NAME" (important). After it we can call an API by using their name like this:"http://RATING-SERVICE/ratings/getRatingsByUserId" without using their dynamic IP-address.
+    RestTemplate getREstTemplate() {
+		return new RestTemplate();
+	}
+
+}

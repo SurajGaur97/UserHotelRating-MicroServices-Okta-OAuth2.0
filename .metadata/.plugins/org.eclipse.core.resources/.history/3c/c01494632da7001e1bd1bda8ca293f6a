@@ -1,0 +1,121 @@
+server:
+  port: 9081
+  
+spring:
+  datasource:
+#   driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/microservices
+    username: root
+    password: root
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    
+  application:
+    name: USER-SERVICE
+#   properties:
+#     hibernate:
+#       dialect: org.hibernate.dialect.MySQLDialect
+
+#This will take the configuration from CONFIG-SERVER which is further configured to take configuration details 
+#form GitHub repository.
+  config:
+    import: optional:configserver:http://localhost:9085
+    
+#For changing profile from GitHub repository's files accordingly like: prod, dev, default.
+#  profiles:
+#    active: prod
+#OR
+#  profiles:
+#    active: dev
+
+#Configuring this User-Service as secure Client service as it calls as a client application to other services 
+#like Rating and Hotel Service.
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-72853696.okta.com/oauth2/default  #The same issuer-uri used below for okta configuration
+          
+#Created client for configuring security for internal application like Rating and Hotel services so that attackers 
+#can not able to attack on these internal services.
+      client:
+        registration:
+          my-internal-client:   #This is our given name and used in FeignClientInterceptor class for client making and creating a incerceptor class
+            provider: okta
+            authorization-grant-type: client_credentials
+            scope: internal #this is taken from okta scope field in Okta dev web > Security > API > Selected Issuer for app > default > scopes 
+            client-id: 0oae4a3er85Hw3G0Z5d7 #this is from API Gateway-service's applcation.yml file okta cofiguration
+            client-secret: dH44rf-UNPMCBIMsvTuSUwYrGmJe-8sz7PzD08SW1w2Q_qpAqAp5XpRM1hM2MxF1 #this is from API Gateway-service's applcation.yml file okta cofiguration
+
+        provider:
+          okta:
+            issuer-uri: https://dev-72853696.okta.com/oauth2/default  #same as above
+
+#This configuration will now come from GitHub config file. Repo name: micro-services-config. And configured here 
+#as just above lines, starts from 'config:'.
+#This configuration for registering this service for making it discoverable by Eureka Service Registry.
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:9080/eureka
+      
+#Actuator Configuration for Resilience4j (For Circuit-Breaker and Rate-Limiter etc.)
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+      
+  endpoints:
+    web:
+      exposure:
+        include: health
+        
+  endpoint:
+    health:
+      show-details: always
+
+#Resilience4j Configuration this can be done in Java classes.
+resilience4j:
+  circuitbreaker:
+    instances:
+      ratingHotelBreaker:
+        register-health-indicator: true
+        event-consumer-buffer-size: 10
+        failure-rate-threshold: 50  #this unit is in percentage
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 6s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: count-based
+
+#Configuring Resilience4j-Retry
+  retry:
+    instances:
+      ratingHotelRetryable:
+        max-attempts: 3
+        wait-duration: 5s   #Recommnded 3s
+        
+#Configuring Resilience4j-Ratelimiter
+  ratelimiter:
+    instances:
+      ratingHotelRateLimiter:
+        limit-refresh-period: 4s  #in 4 seconds only 2 hits allowed from all threads.
+        limit-for-period: 2       #no of threads allowed to hit the api.
+        timeout-duration: 2s
+        
+
+#Configuring 3rd party OKTA Oauth-2.0 configuration for securing gateway application. The below configuration is 
+#taken from application created on okta developer website.
+okta:
+  oauth2:
+    issuer: https://dev-72853696.okta.com/oauth2/default
+    audience: api://default
+        

@@ -1,0 +1,5 @@
+package com.lcwd.gateway.config;
+
+public class SecurityConfig {
+
+}
