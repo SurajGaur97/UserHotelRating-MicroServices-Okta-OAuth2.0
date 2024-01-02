@@ -31,3 +31,11 @@ git remote add origin https://github.com/SurajGaur97/UserHotelRating-MicroServic
 git branch -M main
 
 git push -u origin main
+
+# Adding / Updating the file in Repo
+    git status  //it will give all details of creation, deleted and modified of the files
+    git git commit -m "with messege text"
+    git push -u origin main  //for pushing the files whatever changes made in your working branch.
+    
+    git pull origin main  //In case of any pushing failed occurs
+    
