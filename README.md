@@ -6,7 +6,7 @@ Fault Tolerance, Rate Limter, Retry etc. and Implemented API-Gatway and Configur
 For testing Rate Limiter functionality implemented in this project we need to download the software zip file form the given below link:
 https://jmeter.apache.org/download_jmeter.cgi
 
-# Basic instruction for pushing an pulling files in GitHub
+# Basic instruction given by GiHub for pushing an pulling files
 …or create a new repository on the command line
 
     echo "# UserHotelRating-MicroServices" >> README.md
@@ -23,7 +23,7 @@ https://jmeter.apache.org/download_jmeter.cgi
     git branch -M main
     git push -u origin main
 
-# Adding / Updating the file in Repo
+# Adding / Updating the files in Repo
     git status  //it will give all details of creation, deleted and modified of the files
     git git commit -m "with messege text"
     git push -u origin main  //for pushing the files whatever changes made in your working branch.
