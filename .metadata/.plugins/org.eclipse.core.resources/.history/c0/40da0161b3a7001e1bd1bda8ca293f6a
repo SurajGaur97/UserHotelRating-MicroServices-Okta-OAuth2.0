@@ -1,0 +1,66 @@
+package com.lcwd.gateway.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+@Configuration
+@EnableWebFluxSecurity
+public class SecurityConfig {
+	
+	@Bean
+	SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity){
+
+//		httpSecurity
+//			.authorizeExchange()
+//			.anyExchange()
+//			.authenticated()
+//			.and()
+//			.oauth2Client()
+//			.and()
+//			.oauth2ResourceServer()
+//			.jwt();
+        
+        httpSecurity
+        	.authorizeExchange(exchanges ->
+        		exchanges
+            		.pathMatchers("/category/**", "/questions/**").hasRole("ADMIN")
+            		.pathMatchers("/api/**").permitAll()
+            		.anyExchange().authenticated()
+        		)
+        	.formLogin()
+        	.and()
+        	.oauth2Login();
+		
+		return httpSecurity.build();
+	}
+	
+	@Bean
+    MapReactiveUserDetailsService userDetailsService() {
+        UserDetails user = User.builder()
+            .username("user")
+            .password(passwordEncoder().encode("password"))
+            .roles("USER")
+            .build();
+
+        UserDetails admin = User.builder()
+            .username("admin")
+            .password(passwordEncoder().encode("password"))
+            .roles("ADMIN")
+            .build();
+
+        return new MapReactiveUserDetailsService(user, admin);
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}

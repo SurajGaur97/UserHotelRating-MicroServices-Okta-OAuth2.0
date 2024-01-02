@@ -1,0 +1,38 @@
+package com.lcwd.gateway.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+@Configuration
+@EnableWebFluxSecurity
+public class SecurityConfig {
+	
+	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity){
+		
+//		httpSecurity
+//			.authorizeExchange()
+//			.anyExchange()
+//			.authenticated()
+//			.and()
+//			.oauth2Client()
+//			.and()
+//			.oauth2ResourceServer()
+//			.jwt();
+		
+		httpSecurity.authorizeExchange((requests) -> requests
+                .pathMatchers("/").permitAll()
+                .anyExchange().authenticated()
+        )
+        .logout().logoutUrl("/")
+        .and()
+        .oauth2Client()
+        .and()
+        .oauth2Login();
+		
+		return httpSecurity.build();
+		
+	}
+
+}

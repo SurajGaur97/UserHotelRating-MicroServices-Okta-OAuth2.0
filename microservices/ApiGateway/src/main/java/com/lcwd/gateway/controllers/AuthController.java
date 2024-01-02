@@ -24,6 +24,15 @@ public class AuthController {
 	
 	Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
+	/**
+	 * @implNote It is the EndPoint for getting defined user information after successful login from OKTA login 
+	 * page. And this EndPoint can be used for login to OKTA for users and it returns the token and user info for 
+	 * further authorization process that help user to access all other API accessible through this token letter.    
+	 * @param client
+	 * @param user
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/login")
 	public ResponseEntity<AuthResponse> login(
 			@RegisteredOAuth2AuthorizedClient("okta") OAuth2AuthorizedClient client,

@@ -1,0 +1,82 @@
+package com.lcwd.gateway.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import reactor.core.publisher.Mono;
+
+@Configuration
+@EnableWebFluxSecurity
+public class SecurityConfig {
+	
+	@Bean
+	SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity){
+
+//		httpSecurity
+//			.authorizeExchange()
+//			.anyExchange()
+//			.authenticated()
+//			.and()
+//			.oauth2Client()
+//			.and()
+//			.oauth2ResourceServer()
+//			.jwt();
+        
+		//From ChatGpt
+        httpSecurity
+        	.authorizeExchange(exchanges ->
+        		exchanges
+//        		.pathMatchers("/category/**", "/questions/**").hasRole("ADMIN")
+//        		.pathMatchers("/api/**").permitAll()
+        		.pathMatchers("/login").permitAll()
+//        		.pathMatchers("/").permitAll()
+        		.anyExchange().authenticated()
+        		)
+        	.formLogin(loginSpec -> loginSpec
+        			.loginPage("/login")  // Specify your custom login page URL
+        			.authenticationFailureHandler((webFilterExchange, exception) -> {
+        				// Handle authentication failure if needed
+        				// For example, redirect to the login page with an error message
+        				// You can customize this based on your requirements
+        				return Mono.error(exception);
+        			})
+        		)
+        	.oauth2Login()
+        	.and()
+        	.oauth2ResourceServer()
+            .jwt();
+		
+		return httpSecurity.build();
+	}
+	
+	//From ChatGpt
+	@Bean
+    MapReactiveUserDetailsService userDetailsService() {
+        UserDetails user = User.builder()
+            .username("user")
+            .password(passwordEncoder().encode("password"))
+            .roles("USER")
+            .build();
+
+        UserDetails admin = User.builder()
+            .username("admin")
+            .password(passwordEncoder().encode("password"))
+            .roles("ADMIN")
+            .build();
+
+        return new MapReactiveUserDetailsService(user, admin);
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}

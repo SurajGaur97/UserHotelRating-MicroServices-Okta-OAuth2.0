@@ -1,0 +1,48 @@
+server:
+  port: 9084
+  
+spring:
+  application:
+    name: API-GATEWAY
+    
+#Providing URI for the existing service like user, rating and hotel service so that api gateway can work on it and 
+#link the services with api gateway and client can access the services through api gatway.  
+  cloud:
+    gateway:
+      routes:
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+            
+        - id: HOTEL-SERVICE
+          uri: lb://HOTEL-SERVICE
+          predicates:
+            - Path=/hotels/**,/staffs/**
+            
+        - id: RATING-SERVICE
+          uri: lb://RATING-SERVICE
+          predicates:
+            - Path=/ratings/**   
+  
+#This configuration is for registering this application(service) on Eureka server. By this we can monitor our 
+#application states through it. 
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:9080/eureka
+
+#Configuring 3rd party OKTA Oauth-2.0 configuration for securing gateway application. The below configuration is 
+#taken from application created on okta developer website.
+okta:
+  oauth2:
+    issuer: https://dev-72853696.okta.com/oauth2/default
+    audience: api://default
+    client-id: 0oae4a3er85Hw3G0Z5d7
+    client-secret: dH44rf-UNPMCBIMsvTuSUwYrGmJe-8sz7PzD08SW1w2Q_qpAqAp5XpRM1hM2MxF1
+    scopes: openid,profile,email,offline_access
+      

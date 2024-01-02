@@ -5,6 +5,10 @@ spring:
   application:
     name: API-GATEWAY
     
+  thymeleaf:
+    prefix: classpath:/template/ 
+    suffix: .html
+    
 #Providing URI for the existing service like user, rating and hotel service so that api gateway can work on it and 
 #link the services with api gateway and client can access the services through api gatway.  
   cloud:
@@ -24,6 +28,7 @@ spring:
           uri: lb://RATING-SERVICE
           predicates:
             - Path=/ratings/**   
+  
   
 #This configuration is for registering this application(service) on Eureka server. By this we can monitor our 
 #application states through it. 

@@ -52,6 +52,12 @@
 			<version>3.0.6</version>
 		</dependency>
 
+		<!--Thymeleaf for html page-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
 		<!--This dependecny for restarting on each changesin the project-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,7 +65,7 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!--For getter and setter-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
